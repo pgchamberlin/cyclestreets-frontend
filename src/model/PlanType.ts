@@ -1,0 +1,1 @@
+export type PlanType = 'balanced' | 'fastest' | 'quietest';
