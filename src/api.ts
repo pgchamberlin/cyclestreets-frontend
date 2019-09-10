@@ -7,7 +7,7 @@ export const apiRequest = async (
   params: { [key: string]: any }
 ) => {
   const defaultParams = {
-    key: process.env.REACT_API_CYCLESTREETS_API_KEY as string,
+    key: process.env.REACT_APP_CYCLESTREETS_API_KEY as string,
   };
 
   const mergedParams = {
@@ -37,7 +37,7 @@ export const getNewJourney = (
 
   return apiRequest('journey', {
     plan,
-    itineraryPoints: itineraryPointsString,
+    itinerarypoints: itineraryPointsString,
   });
 };
 
