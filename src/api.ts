@@ -1,18 +1,18 @@
-import { PlanType } from './model/PlanType';
+import { PlanType, JourneyResponse } from "./model/CycleStreets";
 
-const API_BASE_URL = 'https://www.cyclestreets.net/api/';
+const API_BASE_URL = "https://www.cyclestreets.net/api/";
 
 export const apiRequest = async (
   endpoint: string,
   params: { [key: string]: any }
 ) => {
   const defaultParams = {
-    key: process.env.REACT_APP_CYCLESTREETS_API_KEY as string,
+    key: process.env.REACT_APP_CYCLESTREETS_API_KEY as string
   };
 
   const mergedParams = {
     ...defaultParams,
-    ...params,
+    ...params
   };
 
   const paramsString = new URLSearchParams(mergedParams).toString();
@@ -25,21 +25,29 @@ export const apiRequest = async (
   return body;
 };
 
-export const getNewJourney = (
+export const getNewJourney = async (
   plan: PlanType,
   itineraryPoints: { longitude: number; latitude: number; name?: string }[]
 ) => {
   const itineraryPointsString = itineraryPoints
     .map(({ longitude, latitude, name }) =>
-      [longitude, latitude, name].join(',')
+      [longitude, latitude, name].join(",")
     )
-    .join('|');
+    .join("|");
 
-  return apiRequest('journey', {
+  const journeyResponse: JourneyResponse = await apiRequest("journey", {
     plan,
-    itinerarypoints: itineraryPointsString,
+    itinerarypoints: itineraryPointsString
   });
+
+  return journeyResponse;
 };
 
-export const getExistingJourney = (plan: PlanType, itinerary: string) =>
-  apiRequest('journey', { plan, itinerary });
+export const getExistingJourney = async (plan: PlanType, itinerary: string) => {
+  const journeyResponse: JourneyResponse = await apiRequest("journey", {
+    plan,
+    itinerary
+  });
+
+  return journeyResponse;
+};

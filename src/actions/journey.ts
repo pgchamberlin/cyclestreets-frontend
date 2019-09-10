@@ -2,7 +2,11 @@ import { Action } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { StoreState } from "../reducers/rootReducer";
 
-import { getNewJourney as getNewJourneyFromApi } from "../api";
+import {
+  getNewJourney as getNewJourneyFromApi,
+  getExistingJourney as getExistingJourneyFromApi
+} from "../api";
+import { PlanType, JourneyResponse } from "../model/CycleStreets";
 
 export const JOURNEY_REQUEST = "JOURNEY_REQUEST";
 export interface JourneyRequest {
@@ -15,11 +19,28 @@ export const journeyRequest = (): JourneyRequest => ({
 export const JOURNEY_SUCCESS = "JOURNEY_SUCCESS";
 export interface JourneySuccess {
   type: typeof JOURNEY_SUCCESS;
-  journey: any;
+  journey: {
+    itinerary: string;
+    responses: {
+      balanced: JourneyResponse;
+      fastest: JourneyResponse;
+      quietest: JourneyResponse;
+    };
+  };
 }
-export const journeySuccess = (journey: any): JourneySuccess => ({
+export const journeySuccess = (
+  itinerary: string,
+  responses: {
+    balanced: JourneyResponse;
+    fastest: JourneyResponse;
+    quietest: JourneyResponse;
+  }
+): JourneySuccess => ({
   type: JOURNEY_SUCCESS,
-  journey
+  journey: {
+    itinerary,
+    responses
+  }
 });
 
 export const getNewJourney = (
@@ -28,9 +49,23 @@ export const getNewJourney = (
 ): ThunkAction<void, StoreState, null, Action<string>> => async dispatch => {
   dispatch(journeyRequest());
 
-  const journey = await getNewJourneyFromApi("balanced", [from, to]);
+  const balancedResponse = await getNewJourneyFromApi("balanced", [from, to]);
 
-  dispatch(journeySuccess(journey));
+  const { itinerary } = balancedResponse.marker[0]["@attributes"];
+
+  const [fastestResponse, quietestResponse] = await Promise.all(
+    ["fastest", "quietest"].map(plan =>
+      getExistingJourneyFromApi(plan as PlanType, itinerary)
+    )
+  );
+
+  dispatch(
+    journeySuccess(itinerary, {
+      balanced: balancedResponse,
+      fastest: fastestResponse,
+      quietest: quietestResponse
+    })
+  );
 };
 
 export type JourneyAction = JourneyRequest | JourneySuccess;
