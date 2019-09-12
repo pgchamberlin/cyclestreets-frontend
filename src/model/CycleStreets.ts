@@ -66,6 +66,22 @@ interface Waypoint {
 }
 
 export interface JourneyResponse {
-    marker: [RouteMarker, ...SegmentMarker[]];
-    waypoint: Waypoint[]
+  marker: [RouteMarker, ...SegmentMarker[]];
+  waypoint: Waypoint[];
+}
+
+export interface GeocodeResponse {
+  type: "FeatureCollection";
+  features: {
+    type: "Feature";
+    geometry: {
+      type: "Point";
+      coordinates: [number, number];
+    };
+    properties: {
+      bbox: string;
+      name: string;
+      near: string;
+    };
+  }[];
 }
