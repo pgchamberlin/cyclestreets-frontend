@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 
+import Pane from './containers/Pane';
 import { getNewJourney } from "./actions/journey";
 
 interface AppDispatchProps {
@@ -10,7 +11,8 @@ interface AppDispatchProps {
 
 const App: React.FunctionComponent<AppDispatchProps> = ({ getNewJourney }) => {
   return (
-    <div className="App">
+    <div>
+      <Pane />
       <p>Hi</p>
       <p>
         <button
