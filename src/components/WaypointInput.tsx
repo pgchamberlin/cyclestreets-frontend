@@ -1,5 +1,6 @@
 import React from "react";
 import Downshift from "downshift";
+import classNames from "classnames";
 
 interface WaypointInputProps {
   value: string;
@@ -27,31 +28,38 @@ const WaypointInput: React.FunctionComponent<WaypointInputProps> = ({
         getItemProps,
         getMenuProps,
         isOpen,
-        highlightedIndex,
-        selectedItem
+        highlightedIndex
       }) => (
-        <div>
-          <input {...getInputProps()} />
-          <ul {...getMenuProps()}>
-            {!isOpen
-              ? null
-              : results.map((item, index) => (
-                  <li
-                    {...getItemProps({
-                      key: item.id,
-                      index,
-                      item,
-                      style: {
-                        backgroundColor:
-                          highlightedIndex === index ? 'lightgray' : 'white',
-                        fontWeight: selectedItem === item ? 'bold' : 'normal',
-                      },
-                    })}
-                  >
-                    {item.name} <small>{item.near}</small>
-                  </li>
-                ))}
-          </ul>
+        <div className="is-relative">
+          <input
+            {...getInputProps({
+              className: "input",
+              type: "text"
+            })}
+            onBlur={() => {}}
+          />
+          <div {...getMenuProps()}>
+            {isOpen && results.length > 0 && (
+              <div className="dropdown-menu is-block">
+                <div className="dropdown-content">
+                  {results.map((item, index) => (
+                    <a
+                      {...getItemProps({
+                        key: item.id,
+                        index,
+                        item,
+                        className: classNames("dropdown-item", {
+                          "is-active": highlightedIndex === index
+                        })
+                      })}
+                    >
+                      {item.name} <small>{item.near}</small>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </Downshift>
