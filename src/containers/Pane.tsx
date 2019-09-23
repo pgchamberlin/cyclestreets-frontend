@@ -6,6 +6,7 @@ import { SearchState } from "../reducers/searchReducer";
 
 import { updateWaypointValue } from "../actions/plan";
 import { geocode } from "../actions/search";
+import WaypointInput from "../components/WaypointInput";
 
 interface PaneProps {
   waypoints: {
@@ -26,9 +27,7 @@ const Pane: React.FunctionComponent<PaneProps & PaneDispatchProps> = ({
   geocode,
   search
 }) => {
-  const getInputChangeHandler = (id: string) => ({
-    target: { value }
-  }: React.ChangeEvent<HTMLInputElement>) => {
+  const getInputChangeHandler = (id: string) => (value: string) => {
     geocode(value, id);
     updateWaypointValue(id, value);
   };
@@ -36,19 +35,12 @@ const Pane: React.FunctionComponent<PaneProps & PaneDispatchProps> = ({
   return (
     <div>
       {waypoints.map(({ id, value }) => (
-        <div key={id}>
-          <input value={value} onChange={getInputChangeHandler(id)} />
-          {search.waypointId === id && (
-            <ul>
-              {search.result &&
-                search.result.map(({ name, near, id }) => (
-                  <li key={id}>
-                    <strong>{name}</strong> ({near})
-                  </li>
-                ))}
-            </ul>
-          )}
-        </div>
+        <WaypointInput
+          key={id}
+          value={value}
+          onChange={getInputChangeHandler(id)}
+          results={search.result}
+        />
       ))}
     </div>
   );
