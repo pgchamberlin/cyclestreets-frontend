@@ -3,6 +3,7 @@ import Downshift from "downshift";
 import classNames from "classnames";
 
 interface WaypointInputProps {
+  index: number;
   value: string;
   onChange: { (value: string): any };
   results?: {
@@ -15,6 +16,7 @@ interface WaypointInputProps {
 }
 
 const WaypointInput: React.FunctionComponent<WaypointInputProps> = ({
+  index,
   onChange,
   results = []
 }) => {
@@ -30,7 +32,7 @@ const WaypointInput: React.FunctionComponent<WaypointInputProps> = ({
         isOpen,
         highlightedIndex
       }) => (
-        <div className="is-relative">
+        <div className="field is-relative">
           <input
             {...getInputProps({
               className: "input",

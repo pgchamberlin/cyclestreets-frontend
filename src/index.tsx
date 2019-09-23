@@ -5,11 +5,16 @@ import { Provider } from "react-redux";
 import App from "./App";
 import store from "./store/setupStore";
 
+import GlobalStyle from "./GlobalStyle";
+
 import "./index.scss";
 
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
+  <>
+    <GlobalStyle />
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </>,
   document.getElementById("root")
 );

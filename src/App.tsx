@@ -4,9 +4,9 @@ import Pane from "./containers/Pane";
 
 const App: React.FunctionComponent = () => {
   return (
-    <div>
+    <>
       <Pane />
-    </div>
+    </>
   );
 };
 
