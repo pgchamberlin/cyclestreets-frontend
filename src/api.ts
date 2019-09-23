@@ -25,7 +25,7 @@ export const apiRequest = async (
 
   const apiBaseUrl = v2Api ? API_V2_BASE_URL : API_V1_BASE_URL;
 
-  const url = `${apiBaseUrl}${endpoint}.json?${paramsString}`;
+  const url = `${apiBaseUrl}${endpoint}?${paramsString}`;
 
   const response = await fetch(url);
   const body = await response.json();
@@ -43,7 +43,7 @@ export const getNewJourney = async (
     )
     .join("|");
 
-  const journeyResponse: JourneyResponse = await apiRequest("journey", {
+  const journeyResponse: JourneyResponse = await apiRequest("journey.json", {
     plan,
     itinerarypoints: itineraryPointsString
   });
@@ -58,4 +58,12 @@ export const getExistingJourney = async (plan: PlanType, itinerary: string) =>
   })) as JourneyResponse;
 
 export const geocode = async (query: string) =>
-  (await apiRequest("geocode", { q: query }, true)) as GeocodeResponse;
+  (await apiRequest(
+    "geocoder",
+    {
+      q: query,
+      bbox: "-0.51864,51.25365,0.28462,51.75365",
+      countrycodes: "gb,ie"
+    },
+    true
+  )) as GeocodeResponse;
