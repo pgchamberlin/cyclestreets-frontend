@@ -3,10 +3,13 @@ import { bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { StoreState } from "../reducers/rootReducer";
-import { SearchState } from "../reducers/searchReducer";
-
-import { updateWaypointValue } from "../actions/plan";
-import { geocode } from "../actions/search";
+import { Waypoint } from "../model/Waypoint";
+import { Option } from "../model/Option";
+import {
+  updateWaypointInputValue,
+  updateWaypointSelection,
+  geocode
+} from "../actions/plan";
 import WaypointInput from "../components/WaypointInput";
 
 const StyledPane = styled.div`
@@ -18,44 +21,42 @@ const StyledPane = styled.div`
 `;
 
 interface PaneProps {
-  waypoints: {
-    id: string;
-    value: string;
-  }[];
-  search: SearchState;
+  waypoints: Waypoint[];
 }
 
 interface PaneDispatchProps {
-  updateWaypointValue: typeof updateWaypointValue;
+  updateWaypointInputValue: typeof updateWaypointInputValue;
+  updateWaypointSelection: typeof updateWaypointSelection;
   geocode: typeof geocode;
 }
 
 const Pane: React.FunctionComponent<PaneProps & PaneDispatchProps> = ({
   waypoints,
-  updateWaypointValue,
-  geocode,
-  search
+  updateWaypointInputValue,
+  updateWaypointSelection,
+  geocode
 }) => {
   const getInputChangeHandler = (id: string) => (value: string) => {
     geocode(value, id);
-    updateWaypointValue(id, value);
+    updateWaypointInputValue(id, value);
   };
+
+  const getSelectionChangeHandler = (id: string) => (selection: Option) => updateWaypointSelection(id, selection);
 
   return (
     <StyledPane>
       <div className="content">
-        <h1 className="title">
-          Cycle Maps
-        </h1>
+        <h1 className="title">Cycle Maps</h1>
       </div>
       <div className="content">
-        {waypoints.map(({ id, value }, index) => (
+        {waypoints.map(({ id, inputValue, options }, index) => (
           <WaypointInput
             key={id}
             index={index}
-            value={value}
-            onChange={getInputChangeHandler(id)}
-            results={search.result}
+            value={inputValue}
+            onInputChange={getInputChangeHandler(id)}
+            onSelectionChange={getSelectionChangeHandler(id)}
+            options={options}
           />
         ))}
       </div>
@@ -63,16 +64,15 @@ const Pane: React.FunctionComponent<PaneProps & PaneDispatchProps> = ({
   );
 };
 
-const mapStateToProps = ({
-  plan: { waypoints },
-  search
-}: StoreState): PaneProps => ({
-  waypoints,
-  search
+const mapStateToProps = ({ plan: { waypoints } }: StoreState): PaneProps => ({
+  waypoints
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): PaneDispatchProps =>
-  bindActionCreators({ updateWaypointValue, geocode }, dispatch);
+  bindActionCreators(
+    { updateWaypointInputValue, updateWaypointSelection, geocode },
+    dispatch
+  );
 
 export default connect(
   mapStateToProps,

@@ -1,26 +1,13 @@
+import uuid from "uuid/v4";
+
 import {
   PlanAction,
   UPDATE_WAYPOINT_INPUT_VALUE,
   GEOCODE_REQUEST,
   GEOCODE_SUCCESS,
-} from '../actions/plan';
-import uuid from 'uuid/v4';
-
-interface Option {
-  latitude: number;
-  longitude: number;
-  name: string;
-  near: string;
-  id: string;
-}
-
-interface Waypoint {
-  id: string;
-  inputValue: string;
-  selection: Option | null;
-  optionsQuery: string | null;
-  options: Option[];
-}
+  UPDATE_WAYPOINT_SELECTION
+} from "../actions/plan";
+import { Waypoint } from "../model/Waypoint";
 
 export interface PlanState {
   waypoints: Waypoint[];
@@ -28,14 +15,14 @@ export interface PlanState {
 
 const getWaypoint = (): Waypoint => ({
   id: uuid(),
-  inputValue: '',
+  inputValue: "",
   selection: null,
   optionsQuery: null,
-  options: [],
+  options: []
 });
 
 const initialSearchState: PlanState = {
-  waypoints: Array.from({ length: 2 }).map(getWaypoint),
+  waypoints: Array.from({ length: 2 }).map(getWaypoint)
 };
 
 const getWaypointIndex = (state: PlanState, id: string) =>
@@ -55,10 +42,10 @@ const planReducer = (
           ...state.waypoints.slice(0, waypointIndex),
           {
             ...state.waypoints[waypointIndex],
-            inputValue: action.value,
+            inputValue: action.value
           },
-          ...state.waypoints.slice(waypointIndex + 1),
-        ],
+          ...state.waypoints.slice(waypointIndex + 1)
+        ]
       };
     case GEOCODE_REQUEST:
       return {
@@ -67,10 +54,10 @@ const planReducer = (
           ...state.waypoints.slice(0, waypointIndex),
           {
             ...state.waypoints[waypointIndex],
-            optionsQuery: action.query,
+            optionsQuery: action.query
           },
-          ...state.waypoints.slice(waypointIndex + 1),
-        ],
+          ...state.waypoints.slice(waypointIndex + 1)
+        ]
       };
     case GEOCODE_SUCCESS:
       return {
@@ -85,20 +72,32 @@ const planReducer = (
                     ({
                       properties: { name, near },
                       geometry: {
-                        coordinates: [latitude, longitude],
-                      },
+                        coordinates: [latitude, longitude]
+                      }
                     }) => ({
                       name,
                       near,
                       latitude,
                       longitude,
-                      id: uuid(),
+                      id: uuid()
                     })
                   )
-                : state.waypoints[waypointIndex].options,
+                : state.waypoints[waypointIndex].options
           },
-          ...state.waypoints.slice(waypointIndex + 1),
-        ],
+          ...state.waypoints.slice(waypointIndex + 1)
+        ]
+      };
+    case UPDATE_WAYPOINT_SELECTION:
+      return {
+        ...state,
+        waypoints: [
+          ...state.waypoints.slice(0, waypointIndex),
+          {
+            ...state.waypoints[waypointIndex],
+            selection: action.selection
+          },
+          ...state.waypoints.slice(waypointIndex + 1)
+        ]
       };
     default:
       return state;

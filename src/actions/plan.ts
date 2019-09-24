@@ -1,10 +1,11 @@
-import { Action } from 'redux';
-import { ThunkAction } from 'redux-thunk';
-import { StoreState } from '../reducers/rootReducer';
-import { geocode as geocodeFromApi } from '../api';
-import { GeocodeResponse } from '../model/CycleStreets';
+import { Action } from "redux";
+import { ThunkAction } from "redux-thunk";
+import { StoreState } from "../reducers/rootReducer";
+import { geocode as geocodeFromApi } from "../api";
+import { GeocodeResponse } from "../model/CycleStreets";
+import { Option } from "../model/Option";
 
-export const UPDATE_WAYPOINT_INPUT_VALUE = 'UPDATE_WAYPOINT_INPUT_VALUE';
+export const UPDATE_WAYPOINT_INPUT_VALUE = "UPDATE_WAYPOINT_INPUT_VALUE";
 export interface UpdateWaypointInputValue {
   type: typeof UPDATE_WAYPOINT_INPUT_VALUE;
   waypointId: string;
@@ -16,10 +17,10 @@ export const updateWaypointInputValue = (
 ): UpdateWaypointInputValue => ({
   type: UPDATE_WAYPOINT_INPUT_VALUE,
   waypointId,
-  value,
+  value
 });
 
-export const GEOCODE_REQUEST = 'GEOCODE_REQUEST';
+export const GEOCODE_REQUEST = "GEOCODE_REQUEST";
 interface GeocodeRequest {
   type: typeof GEOCODE_REQUEST;
   query: string;
@@ -31,10 +32,10 @@ export const geocodeRequest = (
 ): GeocodeRequest => ({
   type: GEOCODE_REQUEST,
   query,
-  waypointId,
+  waypointId
 });
 
-export const GEOCODE_SUCCESS = 'GEOCODE_SUCCESS';
+export const GEOCODE_SUCCESS = "GEOCODE_SUCCESS";
 interface GeocodeSuccess {
   type: typeof GEOCODE_SUCCESS;
   query: string;
@@ -49,7 +50,7 @@ export const geocodeSuccess = (
   type: GEOCODE_SUCCESS,
   query,
   waypointId,
-  result,
+  result
 });
 
 export const geocode = (
@@ -65,7 +66,23 @@ export const geocode = (
   dispatch(geocodeSuccess(query, waypointId, geocodeResponse));
 };
 
+export const UPDATE_WAYPOINT_SELECTION = "UPDATE_WAYPOINT_SELECTION";
+export interface UpdateWaypointSelection {
+  type: typeof UPDATE_WAYPOINT_SELECTION;
+  waypointId: string;
+  selection: Option;
+}
+export const updateWaypointSelection = (
+  waypointId: string,
+  selection: Option
+): UpdateWaypointSelection => ({
+  type: UPDATE_WAYPOINT_SELECTION,
+  waypointId,
+  selection
+});
+
 export type PlanAction =
   | UpdateWaypointInputValue
   | GeocodeRequest
-  | GeocodeSuccess;
+  | GeocodeSuccess
+  | UpdateWaypointSelection;

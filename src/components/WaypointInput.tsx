@@ -2,28 +2,26 @@ import React from "react";
 import Downshift from "downshift";
 import classNames from "classnames";
 
+import { Option } from "../model/Option";
+
 interface WaypointInputProps {
   index: number;
   value: string;
-  onChange: { (value: string): any };
-  results?: {
-    name: string;
-    near: string;
-    latitude: number;
-    longitude: number;
-    id: string;
-  }[];
+  onInputChange: { (value: string): any };
+  onSelectionChange: { (selection: Option): any}
+  options?: Option[];
 }
 
 const WaypointInput: React.FunctionComponent<WaypointInputProps> = ({
-  index,
-  onChange,
-  results = []
+  onInputChange,
+  onSelectionChange,
+  options = []
 }) => {
   return (
     <Downshift
       itemToString={item => (item ? item.name : "")}
-      onInputValueChange={onChange}
+      onInputValueChange={onInputChange}
+      onChange={onSelectionChange}
     >
       {({
         getInputProps,
@@ -41,10 +39,10 @@ const WaypointInput: React.FunctionComponent<WaypointInputProps> = ({
             onBlur={() => {}}
           />
           <div {...getMenuProps()}>
-            {isOpen && results.length > 0 && (
+            {isOpen && options.length > 0 && (
               <div className="dropdown-menu is-block">
                 <div className="dropdown-content">
-                  {results.map((item, index) => (
+                  {options.map((item, index) => (
                     <a
                       {...getItemProps({
                         key: item.id,
