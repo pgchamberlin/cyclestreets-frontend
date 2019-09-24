@@ -52,7 +52,7 @@ export const getNewJourney = async (
 };
 
 export const getExistingJourney = async (plan: PlanType, itinerary: string) =>
-  (await apiRequest("journey", {
+  (await apiRequest("journey.json", {
     plan,
     itinerary
   })) as JourneyResponse;

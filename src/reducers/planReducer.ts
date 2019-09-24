@@ -72,7 +72,7 @@ const planReducer = (
                     ({
                       properties: { name, near },
                       geometry: {
-                        coordinates: [latitude, longitude]
+                        coordinates: [longitude, latitude]
                       }
                     }) => ({
                       name,

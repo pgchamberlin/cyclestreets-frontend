@@ -7,6 +7,7 @@ import {
   getExistingJourney as getExistingJourneyFromApi
 } from "../api";
 import { PlanType, JourneyResponse } from "../model/CycleStreets";
+import { Option } from "../model/Option";
 
 export const JOURNEY_REQUEST = "JOURNEY_REQUEST";
 export interface JourneyRequest {
@@ -44,8 +45,8 @@ export const journeySuccess = (
 });
 
 export const getNewJourney = (
-  from: { latitude: number; longitude: number; name: string },
-  to: { latitude: number; longitude: number; name: string }
+  from: Option,
+  to: Option
 ): ThunkAction<void, StoreState, null, Action<string>> => async dispatch => {
   dispatch(journeyRequest());
 
