@@ -1,6 +1,6 @@
 import React from "react";
 
-import Pane from "./containers/Pane";
+import Pane from "./components/Pane";
 import Map from "./containers/Map"
 
 const App: React.FunctionComponent = () => {

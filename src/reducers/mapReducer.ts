@@ -1,4 +1,8 @@
-import { MapAction, UPDATE_VIEWPORT } from "../actions/map";
+import {
+  MapAction,
+  UPDATE_VIEWPORT,
+  UPDATE_SELECTED_ROUTE
+} from "../actions/map";
 import { JourneyAction, JOURNEY_SUCCESS } from "../actions/journey";
 import WebMercatorViewport from "viewport-mercator-project";
 import {
@@ -66,6 +70,11 @@ const mapReducer = (
           latitude,
           zoom
         }
+      };
+    case UPDATE_SELECTED_ROUTE:
+      return {
+        ...state,
+        selectedRoute: action.selectedRoute
       };
     default:
       return state;

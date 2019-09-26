@@ -1,7 +1,6 @@
 import React from "react";
 import { bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
-import styled from "styled-components";
 import { StoreState } from "../reducers/rootReducer";
 import { Waypoint } from "../model/Waypoint";
 import { Option } from "../model/Option";
@@ -12,16 +11,6 @@ import {
 } from "../actions/plan";
 import WaypointInput from "../components/WaypointInput";
 import { getNewJourney } from "../actions/journey";
-
-const StyledPane = styled.div`
-  width: 400px;
-  height: 100%;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.5);
-  padding: 10px;
-  position: absolute;
-  top: 0;
-  background-color: rgba(255, 255, 255, 0.8);
-`;
 
 interface PaneProps {
   waypoints: Waypoint[];
@@ -52,10 +41,6 @@ const Pane: React.FunctionComponent<PaneProps & PaneDispatchProps> = ({
   const isMissingSelections = waypoints.some(({ selection }) => !selection);
 
   return (
-    <StyledPane>
-      <div className="content">
-        <h1 className="title">Cycle Maps</h1>
-      </div>
       <div className="content">
         {waypoints.map(({ id, inputValue, options }, index) => (
           <WaypointInput
@@ -80,7 +65,6 @@ const Pane: React.FunctionComponent<PaneProps & PaneDispatchProps> = ({
           </button>
         </div>
       </div>
-    </StyledPane>
   );
 };
 

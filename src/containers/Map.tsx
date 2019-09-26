@@ -67,7 +67,6 @@ const Map: React.FunctionComponent<MapProps & MapDispatchProps> = ({
     );
 
     for (const routeType of [...notSelectedRoutes, selectedRoute]) {
-      console.log(routeType);
       style = style
         .setIn(["sources", routeType], {
           type: "geojson",

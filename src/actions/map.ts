@@ -1,4 +1,5 @@
 import { ViewState } from "react-map-gl";
+import { RouteType } from "../model/Journey";
 
 export const UPDATE_VIEWPORT = "UPDATE_VIEWPORT";
 interface UpdateViewport {
@@ -10,4 +11,16 @@ export const updateViewport = (viewport: ViewState): UpdateViewport => ({
   viewport
 });
 
-export type MapAction = UpdateViewport;
+export const UPDATE_SELECTED_ROUTE = "UPDATE_SELECTED_ROUTE";
+interface UpdateSelectedRoute {
+  type: typeof UPDATE_SELECTED_ROUTE;
+  selectedRoute: RouteType;
+}
+export const updateSelectedRoute = (
+  selectedRoute: RouteType
+): UpdateSelectedRoute => ({
+  type: UPDATE_SELECTED_ROUTE,
+  selectedRoute
+});
+
+export type MapAction = UpdateViewport | UpdateSelectedRoute;
