@@ -1,21 +1,9 @@
 import { JourneyAction, JOURNEY_SUCCESS } from "../actions/journey";
-import { JourneyResponse } from "../model/CycleStreets";
+import { Journey } from "../model/Journey";
 
-export interface JourneyState {
-  journeys: {
-    [itinerary: string]: {
-      balanced: JourneyResponse;
-      fastest: JourneyResponse;
-      quietest: JourneyResponse;
-    };
-  };
-  currentJourney: string | null;
-}
+export type JourneyState = Journey | null
 
-const initialJourneyState: JourneyState = {
-  journeys: {},
-  currentJourney: null
-};
+const initialJourneyState: JourneyState = null;
 
 const JourneyReducer = (
   state: JourneyState = initialJourneyState,
@@ -23,13 +11,7 @@ const JourneyReducer = (
 ): JourneyState => {
   switch (action.type) {
     case JOURNEY_SUCCESS:
-      return {
-        journeys: {
-          ...state.journeys,
-          [action.journey.itinerary]: action.journey.responses
-        },
-        currentJourney: action.journey.itinerary
-      }
+      return action.journey
     default:
       return state;
   }

@@ -1,28 +1,24 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import ReactMapGL, { ViewState, MapState } from "react-map-gl";
+import ReactMapGL from "react-map-gl";
+import Immutable from "immutable";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import baseMapStyle from "../map-style.json";
 import { JourneyState } from "../reducers/journeyReducer";
 import { StoreState } from "../reducers/rootReducer";
 import { ViewportState } from "../reducers/mapReducer";
 import { updateViewport } from "../actions/map";
+import baseMapStyle from "../map-style.json";
+import { RouteType } from "../model/Journey";
 
 const MapContainer = styled.div`
   position: absolute;
   height: 100%;
   width: 100%;
 `;
-
-const initialViewport: ViewState = {
-  latitude: 54.8,
-  longitude: -2.5,
-  zoom: 5
-};
 
 const initialDimensions = {
   width: window.innerWidth,
@@ -32,14 +28,19 @@ const initialDimensions = {
 export interface MapProps {
   journey: JourneyState;
   viewport: ViewportState;
+  selectedRoute: RouteType;
 }
 
 export interface MapDispatchProps {
-  updateViewport: typeof updateViewport
+  updateViewport: typeof updateViewport;
 }
 
-const Map: React.FunctionComponent<MapProps & MapDispatchProps> = ({ journey, viewport, updateViewport }) => {
-  // const [viewport, setViewport] = useState(initialViewport);
+const Map: React.FunctionComponent<MapProps & MapDispatchProps> = ({
+  journey,
+  viewport,
+  updateViewport,
+  selectedRoute
+}) => {
   const [dimensions, setDimensions] = useState(initialDimensions);
 
   const resizeHandler = () => {
@@ -56,43 +57,41 @@ const Map: React.FunctionComponent<MapProps & MapDispatchProps> = ({ journey, vi
     };
   }, []);
 
-  let mapStyle;
+  const mapStyle = useMemo(() => {
+    if (!journey) return baseMapStyle;
 
-  if (journey.currentJourney && journey.journeys[journey.currentJourney]) {
-    const balancedResponse = journey.journeys[journey.currentJourney].balanced;
+    let style = Immutable.fromJS(baseMapStyle);
 
-    const balancedGeoJson = {
-      type: "LineString",
-      coordinates: balancedResponse.marker[0]["@attributes"].coordinates
-        .split(" ")
-        .map(coordinatesString =>
-          coordinatesString
-            .split(",")
-            .map(coordinateString => parseFloat(coordinateString))
-        )
-    };
+    const notSelectedRoutes = Object.keys(journey.routes).filter(
+      routeType => routeType !== selectedRoute
+    );
 
-    mapStyle = {
-      ...baseMapStyle,
-      sources: {
-        ...baseMapStyle.sources,
-        balancedRoute: {
+    for (const routeType of [...notSelectedRoutes, selectedRoute]) {
+      console.log(routeType);
+      style = style
+        .setIn(["sources", routeType], {
           type: "geojson",
-          data: balancedGeoJson
-        }
-      },
-      layers: [
-        ...baseMapStyle.layers,
-        {
-          id: "balancedRoute",
-          source: "balancedRoute",
-          type: "line"
-        }
-      ]
-    };
-  } else {
-    mapStyle = baseMapStyle;
-  }
+          data: journey.routes[routeType as RouteType].geoJson
+        })
+        .set(
+          "layers",
+          style.get("layers").push({
+            id: routeType,
+            source: routeType,
+            type: "line",
+            paint: {
+              "line-color":
+                routeType === selectedRoute
+                  ? "hsl(204, 86%, 53%)"
+                  : "hsl(0, 0%, 48%)",
+              "line-width": 5
+            }
+          })
+        );
+    }
+
+    return style;
+  }, [journey, selectedRoute]);
 
   return (
     <MapContainer>
@@ -108,9 +107,13 @@ const Map: React.FunctionComponent<MapProps & MapDispatchProps> = ({ journey, vi
 
 const mapStateToProps = ({
   journey,
-  map: { viewport }
-}: StoreState): MapProps => ({ journey, viewport });
+  map: { viewport, selectedRoute }
+}: StoreState): MapProps => ({ journey, viewport, selectedRoute });
 
-const mapDispatchToProps = (dispatch: Dispatch): MapDispatchProps => bindActionCreators({ updateViewport }, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch): MapDispatchProps =>
+  bindActionCreators({ updateViewport }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Map);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Map);

@@ -6,6 +6,7 @@ import {
   TRANSITION_EVENTS,
   EasingFunction
 } from "react-map-gl";
+import { RouteType } from "../model/Journey";
 
 export interface ViewportState {
   latitude: number;
@@ -19,6 +20,7 @@ export interface ViewportState {
 
 export interface MapState {
   viewport: ViewportState;
+  selectedRoute: RouteType;
 }
 
 const initialMapSate: MapState = {
@@ -26,7 +28,8 @@ const initialMapSate: MapState = {
     latitude: 54.8,
     longitude: -2.5,
     zoom: 5
-  }
+  },
+  selectedRoute: "balanced"
 };
 
 const mapReducer = (
@@ -47,22 +50,8 @@ const mapReducer = (
         state.viewport
       ).fitBounds(
         [
-          [
-            parseFloat(
-              action.journey.responses.balanced.marker[0]["@attributes"].west
-            ),
-            parseFloat(
-              action.journey.responses.balanced.marker[0]["@attributes"].north
-            )
-          ],
-          [
-            parseFloat(
-              action.journey.responses.balanced.marker[0]["@attributes"].east
-            ),
-            parseFloat(
-              action.journey.responses.balanced.marker[0]["@attributes"].south
-            )
-          ]
+          [action.journey.bbox[0], action.journey.bbox[1]],
+          [action.journey.bbox[2], action.journey.bbox[3]]
         ],
         {
           padding: 20,
@@ -70,6 +59,7 @@ const mapReducer = (
         }
       );
       return {
+        ...state,
         viewport: {
           ...state.viewport,
           longitude,

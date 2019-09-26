@@ -6,8 +6,10 @@ import {
   getNewJourney as getNewJourneyFromApi,
   getExistingJourney as getExistingJourneyFromApi
 } from "../api";
-import { PlanType, JourneyResponse } from "../model/CycleStreets";
+import { PlanType } from "../model/CycleStreets";
 import { Option } from "../model/Option";
+import { Journey } from "../model/Journey";
+import responsesToJourney from "../helpers/responsesToJourney";
 
 export const JOURNEY_REQUEST = "JOURNEY_REQUEST";
 export interface JourneyRequest {
@@ -19,29 +21,14 @@ export const journeyRequest = (): JourneyRequest => ({
 
 export const JOURNEY_SUCCESS = "JOURNEY_SUCCESS";
 export interface JourneySuccess {
-  type: typeof JOURNEY_SUCCESS;
-  journey: {
-    itinerary: string;
-    responses: {
-      balanced: JourneyResponse;
-      fastest: JourneyResponse;
-      quietest: JourneyResponse;
-    };
-  };
+  type: typeof JOURNEY_SUCCESS;   
+  journey: Journey;
 }
 export const journeySuccess = (
-  itinerary: string,
-  responses: {
-    balanced: JourneyResponse;
-    fastest: JourneyResponse;
-    quietest: JourneyResponse;
-  }
+  journey: Journey
 ): JourneySuccess => ({
   type: JOURNEY_SUCCESS,
-  journey: {
-    itinerary,
-    responses
-  }
+  journey
 });
 
 export const getNewJourney = (
@@ -60,12 +47,10 @@ export const getNewJourney = (
     )
   );
 
+  const journey = responsesToJourney(balancedResponse, fastestResponse, quietestResponse);
+
   dispatch(
-    journeySuccess(itinerary, {
-      balanced: balancedResponse,
-      fastest: fastestResponse,
-      quietest: quietestResponse
-    })
+    journeySuccess(journey)
   );
 };
 
