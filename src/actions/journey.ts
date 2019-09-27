@@ -21,12 +21,10 @@ export const journeyRequest = (): JourneyRequest => ({
 
 export const JOURNEY_SUCCESS = "JOURNEY_SUCCESS";
 export interface JourneySuccess {
-  type: typeof JOURNEY_SUCCESS;   
+  type: typeof JOURNEY_SUCCESS;
   journey: Journey;
 }
-export const journeySuccess = (
-  journey: Journey
-): JourneySuccess => ({
+export const journeySuccess = (journey: Journey): JourneySuccess => ({
   type: JOURNEY_SUCCESS,
   journey
 });
@@ -47,11 +45,39 @@ export const getNewJourney = (
     )
   );
 
-  const journey = responsesToJourney(balancedResponse, fastestResponse, quietestResponse);
-
-  dispatch(
-    journeySuccess(journey)
+  const journey = responsesToJourney(
+    balancedResponse,
+    fastestResponse,
+    quietestResponse
   );
+
+  window.history.pushState({}, '', `/${itinerary}`);
+
+  dispatch(journeySuccess(journey));
+};
+
+export const getExistingJourney = (
+  itinerary: string
+): ThunkAction<void, StoreState, null, Action<string>> => async dispatch => {
+  dispatch(journeyRequest());
+
+  const [
+    balancedResponse,
+    fastestResponse,
+    quietestResponse
+  ] = await Promise.all(
+    ["balanced", "fastest", "quietest"].map(plan =>
+      getExistingJourneyFromApi(plan as PlanType, itinerary)
+    )
+  );
+
+  const journey = responsesToJourney(
+    balancedResponse,
+    fastestResponse,
+    quietestResponse
+  );
+
+  dispatch(journeySuccess(journey));
 };
 
 export type JourneyAction = JourneyRequest | JourneySuccess;
