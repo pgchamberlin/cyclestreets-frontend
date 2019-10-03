@@ -63,7 +63,9 @@ export const geocode = (
 
   const geocodeResponse = await geocodeFromApi(query);
 
-  dispatch(geocodeSuccess(query, waypointId, geocodeResponse));
+  if (geocodeResponse) {
+    dispatch(geocodeSuccess(query, waypointId, geocodeResponse));
+  }
 };
 
 export const UPDATE_WAYPOINT_SELECTION = "UPDATE_WAYPOINT_SELECTION";

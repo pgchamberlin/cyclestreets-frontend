@@ -10,7 +10,8 @@ const API_V2_BASE_URL = "https://api.cyclestreets.net/v2/";
 export const apiRequest = async (
   endpoint: string,
   params: { [key: string]: any },
-  v2Api: boolean = false
+  v2Api: boolean = false,
+  abortSignal?: AbortSignal
 ) => {
   const defaultParams = {
     key: process.env.REACT_APP_CYCLESTREETS_API_KEY as string
@@ -27,10 +28,17 @@ export const apiRequest = async (
 
   const url = `${apiBaseUrl}${endpoint}?${paramsString}`;
 
-  const response = await fetch(url);
-  const body = await response.json();
+  try {
+    const response = await fetch(url, { signal: abortSignal });
+    const body = await response.json();
+    return body;
+  } catch (error) {
+    if (error.name === "AbortError") {
+      return null;
+    }
 
-  return body;
+    throw error;
+  }
 };
 
 export const getNewJourney = async (
@@ -57,13 +65,25 @@ export const getExistingJourney = async (plan: PlanType, itinerary: string) =>
     itinerary
   })) as JourneyResponse;
 
-export const geocode = async (query: string) =>
-  (await apiRequest(
+let geocodeAbortController: AbortController;
+
+export const geocode = async (query: string) => {
+  if (geocodeAbortController) {
+    geocodeAbortController.abort();
+  }
+
+  geocodeAbortController = new AbortController();
+
+  const geocodeResponse: GeocodeResponse = await apiRequest(
     "geocoder",
     {
       q: query,
       bbox: "-0.51864,51.25365,0.28462,51.75365",
       countrycodes: "gb,ie"
     },
-    true
-  )) as GeocodeResponse;
+    true,
+    geocodeAbortController.signal
+  );
+
+  return geocodeResponse;
+};
