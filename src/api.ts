@@ -7,6 +7,8 @@ import {
 const API_V1_BASE_URL = "https://www.cyclestreets.net/api/";
 const API_V2_BASE_URL = "https://api.cyclestreets.net/v2/";
 
+// Generic API request
+
 export const apiRequest = async (
   endpoint: string,
   params: { [key: string]: any },
@@ -41,6 +43,8 @@ export const apiRequest = async (
   }
 };
 
+// Journeys
+
 export const getNewJourney = async (
   plan: PlanType,
   itineraryPoints: { longitude: number; latitude: number; name?: string }[]
@@ -64,6 +68,8 @@ export const getExistingJourney = async (plan: PlanType, itinerary: string) =>
     plan,
     itinerary
   })) as JourneyResponse;
+
+// Geocoding
 
 let geocodeAbortController: AbortController;
 
