@@ -15,6 +15,9 @@ import { RouteType } from "../model/Journey";
 
 import baseMapStyle from "../map-styles/outdoors.json";
 
+const SELECTED_ROUTE_COLOUR = "hsl(204, 86%, 53%)";
+const UNSELECTED_ROUTE_COLOUR = "hsl(0, 0%, 48%)";
+
 const MapContainer = styled.div`
   position: absolute;
   height: 100%;
@@ -82,8 +85,8 @@ const Map: React.FunctionComponent<MapProps & MapDispatchProps> = ({
             paint: {
               "line-color":
                 routeType === selectedRoute
-                  ? "hsl(204, 86%, 53%)"
-                  : "hsl(0, 0%, 48%)",
+                  ? SELECTED_ROUTE_COLOUR
+                  : UNSELECTED_ROUTE_COLOUR,
               "line-width": 5
             }
           })
