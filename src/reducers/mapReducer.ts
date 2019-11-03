@@ -12,6 +12,9 @@ import {
 } from "react-map-gl";
 import { RouteType } from "../model/Journey";
 
+const PANEL_WIDTH = 400;
+const PADDING = 30;
+
 export interface ViewportState {
   latitude: number;
   longitude: number;
@@ -58,8 +61,12 @@ const mapReducer = (
           [action.journey.bbox[2], action.journey.bbox[3]]
         ],
         {
-          padding: 20,
-          offset: [400, 0]
+          padding: {
+            top: PADDING,
+            bottom: PADDING,
+            left: PADDING + PANEL_WIDTH,
+            right: PADDING
+          }
         }
       );
       return {
