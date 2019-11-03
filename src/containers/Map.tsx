@@ -1,18 +1,19 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { bindActionCreators, Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import styled from 'styled-components';
-import ReactMapGL from 'react-map-gl';
-import Immutable from 'immutable';
+import React, { useState, useEffect, useMemo } from "react";
+import { bindActionCreators, Dispatch } from "redux";
+import { connect } from "react-redux";
+import styled from "styled-components";
+import ReactMapGL from "react-map-gl";
+import Immutable from "immutable";
 
-import 'mapbox-gl/dist/mapbox-gl.css';
+import "mapbox-gl/dist/mapbox-gl.css";
 
-import { JourneyState } from '../reducers/journeyReducer';
-import { StoreState } from '../reducers/rootReducer';
-import { ViewportState } from '../reducers/mapReducer';
-import { updateViewport } from '../actions/map';
-import baseMapStyle from '../map-style.json';
-import { RouteType } from '../model/Journey';
+import { JourneyState } from "../reducers/journeyReducer";
+import { StoreState } from "../reducers/rootReducer";
+import { ViewportState } from "../reducers/mapReducer";
+import { updateViewport } from "../actions/map";
+import { RouteType } from "../model/Journey";
+
+import baseMapStyle from "../map-styles/outdoors.json";
 
 const MapContainer = styled.div`
   position: absolute;
@@ -22,7 +23,7 @@ const MapContainer = styled.div`
 
 const initialDimensions = {
   width: window.innerWidth,
-  height: window.innerHeight,
+  height: window.innerHeight
 };
 
 export interface MapProps {
@@ -39,21 +40,21 @@ const Map: React.FunctionComponent<MapProps & MapDispatchProps> = ({
   journey: { journey },
   viewport,
   updateViewport,
-  selectedRoute,
+  selectedRoute
 }) => {
   const [dimensions, setDimensions] = useState(initialDimensions);
 
   const resizeHandler = () => {
     setDimensions({
       width: window.innerWidth,
-      height: window.innerHeight,
+      height: window.innerHeight
     });
   };
 
   useEffect(() => {
-    window.addEventListener('resize', resizeHandler);
+    window.addEventListener("resize", resizeHandler);
     return () => {
-      window.removeEventListener('resize', resizeHandler);
+      window.removeEventListener("resize", resizeHandler);
     };
   }, []);
 
@@ -68,23 +69,23 @@ const Map: React.FunctionComponent<MapProps & MapDispatchProps> = ({
 
     for (const routeType of [...notSelectedRoutes, selectedRoute]) {
       style = style
-        .setIn(['sources', routeType], {
-          type: 'geojson',
-          data: journey.routes[routeType as RouteType].geoJson,
+        .setIn(["sources", routeType], {
+          type: "geojson",
+          data: journey.routes[routeType as RouteType].geoJson
         })
         .set(
-          'layers',
-          style.get('layers').push({
+          "layers",
+          style.get("layers").push({
             id: routeType,
             source: routeType,
-            type: 'line',
+            type: "line",
             paint: {
-              'line-color':
+              "line-color":
                 routeType === selectedRoute
-                  ? 'hsl(204, 86%, 53%)'
-                  : 'hsl(0, 0%, 48%)',
-              'line-width': 5,
-            },
+                  ? "hsl(204, 86%, 53%)"
+                  : "hsl(0, 0%, 48%)",
+              "line-width": 5
+            }
           })
         );
     }
@@ -106,7 +107,7 @@ const Map: React.FunctionComponent<MapProps & MapDispatchProps> = ({
 
 const mapStateToProps = ({
   journey,
-  map: { viewport, selectedRoute },
+  map: { viewport, selectedRoute }
 }: StoreState): MapProps => ({ journey, viewport, selectedRoute });
 
 const mapDispatchToProps = (dispatch: Dispatch): MapDispatchProps =>
