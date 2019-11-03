@@ -8,20 +8,22 @@ interface WaypointInputProps {
   index: number;
   value: string;
   onInputChange: { (value: string): any };
-  onSelectionChange: { (selection: Option): any}
+  onSelectionChange: { (selection: Option): any };
   options?: Option[];
 }
 
 const WaypointInput: React.FunctionComponent<WaypointInputProps> = ({
+  value,
+  options = [],
   onInputChange,
-  onSelectionChange,
-  options = []
+  onSelectionChange
 }) => {
   return (
     <Downshift
       itemToString={item => (item ? item.name : "")}
       onInputValueChange={onInputChange}
       onChange={onSelectionChange}
+      initialInputValue={value}
     >
       {({
         getInputProps,

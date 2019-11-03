@@ -1,4 +1,5 @@
 import { LineString, BBox } from "geojson";
+import { Waypoint } from "./Waypoint";
 
 export interface Route {
   geoJson: LineString;
@@ -7,7 +8,7 @@ export interface Route {
   time: number;
 }
 
-export type RouteType = 'balanced' | 'fastest' | 'quietest';
+export type RouteType = "balanced" | "fastest" | "quietest";
 
 export interface Journey {
   routes: {
@@ -15,5 +16,6 @@ export interface Journey {
     fastest: Route;
     quietest: Route;
   };
+  waypoints: Waypoint[];
   bbox: BBox;
 }

@@ -7,6 +7,7 @@ import {
   GEOCODE_SUCCESS,
   UPDATE_WAYPOINT_SELECTION
 } from "../actions/plan";
+import { JourneyAction, JOURNEY_SUCCESS } from "../actions/journey";
 import { Waypoint } from "../model/Waypoint";
 
 export interface PlanState {
@@ -30,12 +31,13 @@ const getWaypointIndex = (state: PlanState, id: string) =>
 
 const planReducer = (
   state: PlanState = initialSearchState,
-  action: PlanAction
+  action: PlanAction | JourneyAction
 ): PlanState => {
-  const waypointIndex = getWaypointIndex(state, action.waypointId);
+  let waypointIndex;
 
   switch (action.type) {
     case UPDATE_WAYPOINT_INPUT_VALUE:
+      waypointIndex = getWaypointIndex(state, action.waypointId);
       return {
         ...state,
         waypoints: [
@@ -48,6 +50,7 @@ const planReducer = (
         ]
       };
     case GEOCODE_REQUEST:
+      waypointIndex = getWaypointIndex(state, action.waypointId);
       return {
         ...state,
         waypoints: [
@@ -60,6 +63,7 @@ const planReducer = (
         ]
       };
     case GEOCODE_SUCCESS:
+      waypointIndex = getWaypointIndex(state, action.waypointId);
       return {
         ...state,
         waypoints: [
@@ -88,6 +92,7 @@ const planReducer = (
         ]
       };
     case UPDATE_WAYPOINT_SELECTION:
+      waypointIndex = getWaypointIndex(state, action.waypointId);
       return {
         ...state,
         waypoints: [
@@ -99,6 +104,8 @@ const planReducer = (
           ...state.waypoints.slice(waypointIndex + 1)
         ]
       };
+    case JOURNEY_SUCCESS:
+      return { waypoints: action.journey.waypoints };
     default:
       return state;
   }

@@ -1,6 +1,7 @@
+import uuid from "uuid/v4";
+import { BBox } from "geojson";
 import { JourneyResponse } from "../model/CycleStreets";
 import { Journey, Route } from "../model/Journey";
-import { BBox } from "geojson";
 
 const transformResponse = (response: JourneyResponse): Route => {
   const routeMarker = response.marker[0]["@attributes"];
@@ -63,7 +64,43 @@ const responsesToJourney = (
 
   return {
     routes,
-    bbox
+    bbox,
+    waypoints: [
+      {
+        id: uuid(),
+        inputValue: balanced.marker[0]["@attributes"].start,
+        selection: {
+          id: uuid(),
+          latitude: parseFloat(
+            balanced.marker[0]["@attributes"].start_latitude
+          ),
+          longitude: parseFloat(
+            balanced.marker[0]["@attributes"].start_longitude
+          ),
+          name: balanced.marker[0]["@attributes"].start,
+          near: ""
+        },
+        optionsQuery: null,
+        options: []
+      },
+      {
+        id: uuid(),
+        inputValue: balanced.marker[0]["@attributes"].finish,
+        selection: {
+          id: uuid(),
+          latitude: parseFloat(
+            balanced.marker[0]["@attributes"].finish_latitude
+          ),
+          longitude: parseFloat(
+            balanced.marker[0]["@attributes"].finish_longitude
+          ),
+          name: balanced.marker[0]["@attributes"].finish,
+          near: ""
+        },
+        optionsQuery: null,
+        options: []
+      }
+    ]
   };
 };
 

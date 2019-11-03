@@ -5,7 +5,7 @@ interface RouteMarker {
     type: "route";
     start: string;
     start_latitude: string;
-    start_longiture: string;
+    start_longitude: string;
     finish: string;
     finish_latitude: string;
     finish_longitude: string;
